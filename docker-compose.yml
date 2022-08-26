@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  sqldb:
+    image: postgres
+    container_name: SqlDataBase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    environment:
+      - POSTGRES_DB=DbContaCliente
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    networks:
+      - mynetwork
+
+  api_conta_clite:
+    container_name: Api_Conta_Cliente
+    ports:
+      - 8080:8080
+      - 80:80
+    build:
+      context: ./Api Conta Cliente/Api_Conta_Cliente/
+      dockerfile: ./Docker/Dockerfile
+    links:
+      - sqldb
+    depends_on:
+      - "sqldb"
+    networks:
+      - mynetwork
+
+  pgadmin:
+    container_name: PgAdmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "1234"
+    ports:
+      - "15432:80"
+    depends_on:
+      - sqldb
+    networks:
+      - mynetwork
+
+  splunk:
+    #build: . 
+    hostname: splunkenterprise
+    image: splunk/splunk:latest
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: 12345678
+      SPLUNK_ENABLE_LISTEN: 9997
+      SPLUNK_ADD: tcp 1514
+    volumes:
+      - opt-splunk-etc:/opt/splunk/etc
+      - opt-splunk-var:/opt/splunk/var
+    ports:
+      - "8000:8000"
+      - "9997:9997"
+      - "8088:8088"
+      - "1514:1514"
+    networks:
+      - mynetwork
+
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog:
+    driver: local
+  opt-splunk-etc:
+    driver: local
+  opt-splunk-var:
+    driver: local
+
+networks:
+  mynetwork:
+    driver: bridge

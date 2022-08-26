@@ -368,3 +368,6 @@ myapp.db
 *.pdf
 Arquivos/Certificados/Boleto.pdf
 *.pfx
+
+# Migrations
+**/migrations/*
