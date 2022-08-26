@@ -104,6 +104,7 @@ namespace Api_Conta_Cliente
             services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Default")));
             // Services
             services.AddScoped<IClienteService, ClienteService>();
+            services.AddScoped<IContaService, ContaService>();
             // Controllers
             services.AddControllers();//.AddNewtonsoftJson(options =>
             //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
