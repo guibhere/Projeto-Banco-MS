@@ -28,10 +28,37 @@ public class ContaController : ControllerBase
     }
 
     [HttpPost("Cadastrar/{cpf}")]
-    public async Task<ActionResult<dynamic>> CadastrarConta([FromBody] ContaInputPostDTO input,string cpf)
+    public async Task<ActionResult<dynamic>> CadastrarConta([FromBody] ContaInputPostDTO input, string cpf)
     {
-        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value,input);
-        var resp =  _contaserv.CadastrarConta(input,cpf);
+        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
+        var resp = _contaserv.CadastrarConta(input, cpf);
+        _splunk.EnviarLogAsync("testando splunk");
+        return Ok(resp);
+    }
+
+    [HttpGet("Consultar/Saldo/{agencia}/{conta}/{digito}")]
+    public async Task<ActionResult<dynamic>> ConsultarSaldo(string agencia, string conta, char digito)
+    {
+        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
+        var resp = _contaserv.ConsultarSaldo(agencia, conta, digito);
+        _splunk.EnviarLogAsync("testando splunk");
+        return Ok(resp);
+
+    }
+    [HttpPatch("Atualizar/Saldo/Depositar/{agencia}/{conta}/{digito}")]
+    public async Task<ActionResult<dynamic>> DepositarSaldo([FromBody] ContaInputPatchAtualizarSaldoDTO input,string agencia, string conta, char digito)
+    {
+        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
+        var resp = _contaserv.DepositarSaldo(input,agencia, conta, digito);
+        _splunk.EnviarLogAsync("testando splunk");
+        return Ok(resp);
+
+    }
+    [HttpPatch("Atualizar/Saldo/Extrair/{agencia}/{conta}/{digito}")]
+    public async Task<ActionResult<dynamic>> ExtrairSaldo([FromBody] ContaInputPatchAtualizarSaldoDTO input,string agencia, string conta, char digito)
+    {
+        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
+        var resp = _contaserv.ExtrairSaldo(input,agencia, conta, digito);
         _splunk.EnviarLogAsync("testando splunk");
         return Ok(resp);
     }

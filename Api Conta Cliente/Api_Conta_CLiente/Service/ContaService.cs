@@ -25,20 +25,59 @@ public class ContaService : IContaService
         _splunk = splunk;
     }
 
-    public dynamic CadastrarConta(ContaInputPostDTO input,string cpf)
+    public dynamic CadastrarConta(ContaInputPostDTO input, string cpf)
     {
         _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
-        var cliente = _context.Clientes.FirstOrDefault(c => c.Cpf== cpf);
+        var cliente = _context.Clientes.FirstOrDefault(c => c.Cpf == cpf);
 
-        if(cliente == null)
+        if (cliente == null)
         {
-            _splunk.LogarMensagem("Cliente não encontrado:" + cpf);
             throw new Exception("Cliente não encontrado");
         }
-        var conta = new Conta(input.Agencia, input.NumeroConta,input.Digito,input.Saldo,cpf,input.Codigo_Tipo_Conta);
+        var conta = new Conta(input.Agencia, input.NumeroConta, input.Digito, input.Saldo, cpf, input.Codigo_Tipo_Conta);
         _context.Contas.Add(conta);
         _context.SaveChanges();
-        _splunk.LogarMensagem("Conta Cadastrado:" + conta.Id);
-        return "";
+        _splunk.LogarMensagem("Conta Cadastrada:" + conta.Id);
+        return new Response("Conta Cadastrada","OK",200,conta);
+    }
+    public dynamic ConsultarSaldo(string agencia, string numero_conta, char digito)
+    {
+        _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
+        var conta = _context.Contas.FirstOrDefault(c => c.Numero_Agencia == agencia && c.Numero_Conta == numero_conta && c.Digito == digito);
+        return new ContaOutputConsultaSaldoDTO(conta.Saldo);
+    }
+    public dynamic DepositarSaldo(ContaInputPatchAtualizarSaldoDTO input, string agencia, string numero_conta, char digito)
+    {
+        _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
+        var conta = _context.Contas.FirstOrDefault(c => c.Numero_Agencia == agencia && c.Numero_Conta == numero_conta && c.Digito == digito);
+        if (conta != null)
+        {
+            _splunk.LogarMensagem("Depositando saldo :" + input.valor);
+            conta.Saldo += input.valor;
+            _context.Contas.Update(conta);
+            _context.SaveChanges();
+        }
+        else
+            throw new Exception("Conta não encontrada!");
+
+        return new ContaOutputConsultaSaldoDTO(conta.Saldo);
+    }
+    public dynamic ExtrairSaldo(ContaInputPatchAtualizarSaldoDTO input, string agencia, string numero_conta, char digito)
+    {
+        _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
+        var conta = _context.Contas.FirstOrDefault(c => c.Numero_Agencia == agencia && c.Numero_Conta == numero_conta && c.Digito == digito);
+        if (conta != null)
+        {
+            _splunk.LogarMensagem("Retirando saldo :" + input.valor);
+            conta.Saldo -= input.valor;
+            if(conta.Saldo < 0)
+                throw new Exception("Saldo Insuficiente");
+            _context.Contas.Update(conta);
+            _context.SaveChanges();
+        }
+        else
+            throw new Exception("Conta não encontrada!");
+
+        return new ContaOutputConsultaSaldoDTO(conta.Saldo);
     }
 }

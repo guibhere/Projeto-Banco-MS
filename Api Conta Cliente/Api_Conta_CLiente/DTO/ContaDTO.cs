@@ -11,3 +11,15 @@ public class ContaInputPostDTO
     public Decimal Saldo { get; set; }
     public long Codigo_Tipo_Conta{get;set;}
 }
+public class ContaOutputConsultaSaldoDTO
+{
+    public Decimal Saldo{get;set;}
+    public ContaOutputConsultaSaldoDTO(decimal saldo)
+    {
+        Saldo = saldo;
+    }
+}
+public class ContaInputPatchAtualizarSaldoDTO
+{
+    public Decimal valor{get;set;}
+}

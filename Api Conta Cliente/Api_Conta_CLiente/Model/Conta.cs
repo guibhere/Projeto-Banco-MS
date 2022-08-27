@@ -15,13 +15,13 @@ namespace Api_Conta_Cliente.Models
     {
         public long Id { get; set; }
         public string Numero_Agencia{get;set;}
-        public Agencia Agencia { get; set; }
+        public virtual Agencia Agencia { get; set; }
         public string Numero_Conta { get; set; }
         public char Digito { get; set; }
         public Decimal Saldo { get; set; }
         public string Cpf { get; set; }
-        public Cliente Cliente{get;set;}
-        public TipoConta TipoConta{get;set;}
+        public virtual Cliente Cliente{get;set;}
+        public virtual TipoConta TipoConta{get;set;}
         public long Codigo_Tipo_Conta{get;set;}
         public Conta(string numero_Agencia, string numero_Conta, char digito, decimal saldo,string cpf,long codigo_Tipo_Conta)
         {

@@ -3,7 +3,7 @@ namespace Api_Conta_Cliente.Models{
     {
         public long Codigo_Conta{get;set;}
         public string Descricao{get;set;}
-        public List<Conta> Contas{get;set;}
+        public virtual List<Conta> Contas{get;set;}
         public TipoConta(long codigo_Conta,string descricao)
         {
             Codigo_Conta = codigo_Conta;

@@ -1,31 +1,15 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Api_Conta_Cliente.Service.Interface;
 using Api_Conta_Cliente.Helper.Interface;
-using Splunk.Configurations;
 using Api_Conta_Cliente.Helper;
 using static Api_Conta_Cliente.Helper.SplunkLogger;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Api_Conta_Cliente
 {
@@ -108,8 +92,7 @@ namespace Api_Conta_Cliente
             services.AddScoped<IAgenciaService, AgenciaService>();
             services.AddScoped<ITipoContaService, TipoContaService>();
             // Controllers
-            services.AddControllers();//.AddNewtonsoftJson(options =>
-            //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             //Splunk
             var setting = Configuration.GetSection("SplunkConfig");
