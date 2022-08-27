@@ -105,6 +105,8 @@ namespace Api_Conta_Cliente
             // Services
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IContaService, ContaService>();
+            services.AddScoped<IAgenciaService, AgenciaService>();
+            services.AddScoped<ITipoContaService, TipoContaService>();
             // Controllers
             services.AddControllers();//.AddNewtonsoftJson(options =>
             //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);

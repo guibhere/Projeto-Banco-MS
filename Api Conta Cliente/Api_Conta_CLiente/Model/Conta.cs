@@ -13,23 +13,24 @@ namespace Api_Conta_Cliente.Models
 {
     public class Conta
     {
-        [Key]
         public long Id { get; set; }
-        public string Agencia { get; set; }
+        public string Numero_Agencia{get;set;}
+        public Agencia Agencia { get; set; }
         public string Numero_Conta { get; set; }
         public char Digito { get; set; }
         public Decimal Saldo { get; set; }
-        [ForeignKey("Cpf")]
-        [Required]
         public string Cpf { get; set; }
         public Cliente Cliente{get;set;}
-        public Conta(string agencia, string numero_Conta, char digito, decimal saldo,string cpf)
+        public TipoConta TipoConta{get;set;}
+        public long Codigo_Tipo_Conta{get;set;}
+        public Conta(string numero_Agencia, string numero_Conta, char digito, decimal saldo,string cpf,long codigo_Tipo_Conta)
         {
-            Agencia = agencia;
+            Numero_Agencia = numero_Agencia;
             Numero_Conta = numero_Conta;
             Digito = digito;
             Saldo = saldo;
             Cpf = cpf;
+            Codigo_Tipo_Conta = codigo_Tipo_Conta;
         }
 
     }

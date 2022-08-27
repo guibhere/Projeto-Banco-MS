@@ -13,32 +13,26 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-public class ContaService : IContaService
+public class AgenciaService : IAgenciaService
 {
     private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _environment;
     private readonly ISplunkLogger _splunk;
-    public ContaService(ApplicationDbContext context, IWebHostEnvironment environment, ISplunkLogger splunk)
+    public AgenciaService(ApplicationDbContext context, IWebHostEnvironment environment, ISplunkLogger splunk)
     {
         _context = context;
         _environment = environment;
         _splunk = splunk;
     }
 
-    public dynamic CadastrarConta(ContaInputPostDTO input,string cpf)
+    public dynamic CadastrarAgencia(AgenciaInputPostDTO input)
     {
         _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
-        var cliente = _context.Clientes.FirstOrDefault(c => c.Cpf== cpf);
 
-        if(cliente == null)
-        {
-            _splunk.LogarMensagem("Cliente não encontrado:" + cpf);
-            throw new Exception("Cliente não encontrado");
-        }
-        var conta = new Conta(input.Agencia, input.NumeroConta,input.Digito,input.Saldo,cpf,input.Codigo_Tipo_Conta);
-        _context.Contas.Add(conta);
+        var agencia = new Agencia(input.Numero_Agencia,input.Descricao);
+        _context.Agencias.Add(agencia);
         _context.SaveChanges();
-        _splunk.LogarMensagem("Conta Cadastrado:" + conta.Id);
+        _splunk.LogarMensagem("Agencia Cadastrada:" + agencia.Numero_Agencia);
         return "";
     }
 }

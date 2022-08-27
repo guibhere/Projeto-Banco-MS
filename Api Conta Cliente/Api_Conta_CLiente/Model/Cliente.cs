@@ -13,9 +13,9 @@ namespace Api_Conta_Cliente.Models
 {
     public class Cliente
     {
-        [Key]
         public string Cpf { get; set; }
         public string Nome { get; set; }
+        public List<Conta> Contas{get;set;}
         public Cliente(string nome, string cpf)
         {
             Nome = nome;
