@@ -81,18 +81,21 @@ services:
     container_name: dynamodb
     hostname: dynamodb
     ports:
-      - "8001:8001"
+      - "8003:8003"
     volumes:
-      -  dynamodata:/home/dynamodblocal/data
+      - dynamodb-data:/home/dynamodblocal/data
+    user: root
+    command: "-jar DynamoDBLocal.jar -port 8003 -sharedDb -optimizeDbBeforeStartup -dbPath /home/dynamodblocal/data/"
+
     networks:
       - mynetwork
 
   dynamodb-admin:
     image: aaronshaf/dynamodb-admin
     ports:
-      - "8002:8002"
+      - "8001:8001"
     environment:
-      DYNAMO_ENDPOINT: "http://dynamodb-local:8001"
+      DYNAMO_ENDPOINT: "http://dynamodb:8003"
       AWS_REGION: "us-west-2"
       AWS_ACCESS_KEY_ID: local
       AWS_SECRET_ACCESS_KEY: local
@@ -112,7 +115,7 @@ volumes:
     driver: local
   opt-splunk-var:
     driver: local
-  dynamodata:
+  dynamodb-data:
     driver: local
 
 networks:

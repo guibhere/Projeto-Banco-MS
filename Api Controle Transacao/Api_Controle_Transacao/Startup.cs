@@ -10,6 +10,8 @@ using Api_Controle_Transacao.Helper;
 using static Api_Controle_Transacao.Helper.SplunkLogger;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 
 namespace Api_Controle_Transacao
 {
@@ -84,15 +86,21 @@ namespace Api_Controle_Transacao
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]))
                 };
             });
-            // Database
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Default")));
+            // Databaset
+
+            // DynamoDB
+            var setting = Configuration.GetSection("DynamoDBConfig");
+            services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(new AmazonDynamoDBConfig{ ServiceURL = setting.GetValue<string>("Server")}));
+            services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+
             // Services
             services.AddScoped<ITrasacaoService, TrasacaoService>();
+
             // Controllers
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             //Splunk
-            var setting = Configuration.GetSection("SplunkConfig");
+            setting = Configuration.GetSection("SplunkConfig");
             services.Configure<SplunkConfig>(setting);
             services.AddScoped<ISplunkLogger,SplunkLogger>();
 
@@ -100,6 +108,7 @@ namespace Api_Controle_Transacao
             setting = Configuration.GetSection("ContaClienteConfig");
             services.Configure<ContaClienteConfig>(setting);
             services.AddScoped<IContaClienteConector,ContaClienteConector>();
+            services.AddScoped<IHashMaker,HashMaker>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
