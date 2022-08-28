@@ -40,6 +40,10 @@ services:
     build:
       context: ./Api Controle Transacao/Api_Controle_Transacao/
       dockerfile: ./Docker/Dockerfile
+    links:
+      - dynamodb
+    depends_on:
+      - dynamodb
     networks:
       - mynetwork
 
@@ -104,6 +108,36 @@ services:
     networks:
       - mynetwork
 
+  zookeeper:
+    image: "bitnami/zookeeper:latest"
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami/zookeeper"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - mynetwork
+
+  kafka:
+    image: "bitnami/kafka:latest"
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    volumes:
+      - "kafka_data:/bitnami/kafka"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+    depends_on:
+      - zookeeper
+    networks:
+      - mynetwork
+
 volumes:
   pgdata:
     driver: local
@@ -116,6 +150,10 @@ volumes:
   opt-splunk-var:
     driver: local
   dynamodb-data:
+    driver: local
+  zookeeper_data:
+    driver: local
+  kafka_data:
     driver: local
 
 networks:

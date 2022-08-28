@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.Runtime;
 
 namespace Api_Controle_Transacao
 {
@@ -89,8 +90,14 @@ namespace Api_Controle_Transacao
             // Databaset
 
             // DynamoDB
-            var setting = Configuration.GetSection("DynamoDBConfig");
-            services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(new AmazonDynamoDBConfig{ ServiceURL = setting.GetValue<string>("Server")}));
+            if (Configuration.GetSection("DynamoDBConfig").GetValue<bool>("Local"))
+            {
+                var dynamodbconfig = new AmazonDynamoDBConfig { ServiceURL = (Configuration.GetSection("DynamoDBConfig").GetValue<String>("Server")) };
+                var credentials = new BasicAWSCredentials("xxx", "xxx");
+                services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(credentials, dynamodbconfig));
+            }
+            else
+                services.AddAWSService<IAmazonDynamoDB>();
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
 
             // Services
@@ -100,15 +107,15 @@ namespace Api_Controle_Transacao
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             //Splunk
-            setting = Configuration.GetSection("SplunkConfig");
+            var setting = Configuration.GetSection("SplunkConfig");
             services.Configure<SplunkConfig>(setting);
-            services.AddScoped<ISplunkLogger,SplunkLogger>();
+            services.AddScoped<ISplunkLogger, SplunkLogger>();
 
             //Helpers
             setting = Configuration.GetSection("ContaClienteConfig");
             services.Configure<ContaClienteConfig>(setting);
-            services.AddScoped<IContaClienteConector,ContaClienteConector>();
-            services.AddScoped<IHashMaker,HashMaker>();
+            services.AddScoped<IContaClienteConector, ContaClienteConector>();
+            services.AddScoped<IHashMaker, HashMaker>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
