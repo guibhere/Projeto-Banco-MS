@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
@@ -6,7 +7,7 @@ using Amazon.Util;
 using Api_Controle_Transacao.Helper.Interface;
 using Api_Controle_Transacao.Models;
 using Api_Controle_Transacao.Service.Interface;
-
+using Confluent.Kafka;
 
 public class TrasacaoService : ITrasacaoService
 {
@@ -15,16 +16,18 @@ public class TrasacaoService : ITrasacaoService
     private readonly IContaClienteConector _contacliente;
     private readonly IDynamoDBContext _dynamocontext;
     private readonly IHashMaker _hash;
-    public TrasacaoService(IWebHostEnvironment environment, ISplunkLogger splunk, IContaClienteConector contacliente, IDynamoDBContext dynamo, IHashMaker hash)
+    private readonly IProducer<Null,string> _kafkaproducer;
+    public TrasacaoService(IWebHostEnvironment environment, ISplunkLogger splunk, IContaClienteConector contacliente, IDynamoDBContext dynamo, IHashMaker hash,IProducer<Null, string> producer)
     {
         _environment = environment;
         _splunk = splunk;
         _contacliente = contacliente;
         _dynamocontext = dynamo;
         _hash = hash;
+        _kafkaproducer = producer;
     }
 
-    public dynamic ProcessarTransacao(TransacaoInputPostDTO input)
+    public async Task<dynamic> ProcessarTransacao(TransacaoInputPostDTO input)
     {
         TransacaoOutputPostDTO output = new TransacaoOutputPostDTO();
         output.Valor_Transacao = input.Valor_Transacao;
@@ -46,11 +49,11 @@ public class TrasacaoService : ITrasacaoService
         output.Saldo_Conta_Destino = saldo.saldo;
 
         _splunk.LogarMensagem("Persistindo Transação");
-        SalvarDados(input);
+        await SalvarDados(input);
         return new Response("Transacao concluida", "OK", 200, output);
     }
 
-    public async void SalvarDados(TransacaoInputPostDTO input)
+    public async Task SalvarDados(TransacaoInputPostDTO input)
     {
         Transacao trans = new Transacao(input.Numero_Conta_Origem, input.Numero_Agencia_Origem, input.Numero_Digito_Origem,
                                         input.Numero_Conta_Destino, input.Numero_Agencia_Destino, input.Numero_Digito_Destino,
@@ -60,6 +63,13 @@ public class TrasacaoService : ITrasacaoService
         trans.HashIndexDestino = _hash.HashString(input.Numero_Conta_Destino + input.Numero_Agencia_Destino + input.Numero_Digito_Destino);
 
         await _dynamocontext.SaveAsync(trans);
+        _splunk.LogarMensagem("Transação persistida!");
+
+        _splunk.LogarMensagem("Produzindo mensagem KAFKA");
+        var msg = new Message<Null,string>();
+        msg.Value = JsonSerializer.Serialize<Transacao>(trans);
+        var resp = await _kafkaproducer.ProduceAsync("Api_Controle_Transacao",msg);
+        _splunk.LogarMensagem("Mesagem postada");
     }
 
     public async Task<dynamic> ConsultarTransacoesDate(TransacaoInputGetDateDTO input, string agencia, string conta, string digito)

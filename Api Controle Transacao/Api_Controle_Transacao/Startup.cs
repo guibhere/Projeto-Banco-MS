@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
+using Confluent.Kafka.DependencyInjection;
 
 namespace Api_Controle_Transacao
 {
@@ -98,6 +99,7 @@ namespace Api_Controle_Transacao
             }
             else
                 services.AddAWSService<IAmazonDynamoDB>();
+
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
 
             // Services
@@ -110,6 +112,10 @@ namespace Api_Controle_Transacao
             var setting = Configuration.GetSection("SplunkConfig");
             services.Configure<SplunkConfig>(setting);
             services.AddScoped<ISplunkLogger, SplunkLogger>();
+
+            //Kafka
+            Dictionary<string,string> KafkaConfig = Configuration.GetSection("KafkaConfig").GetChildren().ToDictionary( c=> c.Key,c => c.Value);
+            services.AddKafkaClient(KafkaConfig);
 
             //Helpers
             setting = Configuration.GetSection("ContaClienteConfig");
