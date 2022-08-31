@@ -141,7 +141,7 @@ services:
       - mynetwork
   
   integrador:
-    container_name: Integrador Bacen
+    container_name: integrador_bacen
     build:
       context: ./Integrador Bacen/
       dockerfile: ./Docker/Dockerfile

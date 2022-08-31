@@ -12,7 +12,6 @@
     <PackageReference Include="Confluent.Kafka.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
-    <PackageReference Include="razorsharp" Version="1.2.8" />
     <PackageReference Include="restsharp" Version="108.0.1" />
   </ItemGroup>
 
