@@ -121,6 +121,8 @@ services:
 
   kafka:
     image: "bitnami/kafka:latest"
+    container_name: kafka
+    hostname: kafka
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -135,6 +137,14 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
+    networks:
+      - mynetwork
+  
+  integrador:
+    container_name: Integrador Bacen
+    build:
+      context: ./Integrador Bacen/
+      dockerfile: ./Docker/Dockerfile
     networks:
       - mynetwork
 
