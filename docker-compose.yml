@@ -142,6 +142,8 @@ services:
   
   integrador:
     container_name: integrador_bacen
+    environment:
+      - Ambiente=Deploy
     build:
       context: ./Integrador Bacen/
       dockerfile: ./Docker/Dockerfile

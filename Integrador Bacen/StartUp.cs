@@ -3,13 +3,16 @@ using Integrador.Helper;
 using Integrador.Helper.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using static Integrador.Helper.SplunkLogger;
 
 public class Startup
 {
-    public Startup()
+    public Startup(string ambiente)
     {
         var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Development.json", true);
+        if(ambiente == "Deploy")
+            builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", true);
         Configuration = builder.Build();
     }
 
@@ -27,6 +30,6 @@ public class Startup
         services.Configure<SplunkConfig>(setting);
         services.AddScoped<ISplunkLogger, SplunkLogger>();
 
-        services.AddSingleton<IIntegradorService,IntegradorService>();
+        services.AddSingleton<IIntegradorService, IntegradorService>();
     }
 }
