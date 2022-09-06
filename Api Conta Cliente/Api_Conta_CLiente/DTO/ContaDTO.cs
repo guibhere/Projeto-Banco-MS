@@ -9,11 +9,11 @@ public class ContaInputPostDTO
     public string NumeroConta { get; set; }
     public char Digito { get; set; }
     public Decimal Saldo { get; set; }
-    public long Codigo_Tipo_Conta{get;set;}
+    public long Codigo_Tipo_Conta { get; set; }
 }
 public class ContaOutputConsultaSaldoDTO
 {
-    public Decimal Saldo{get;set;}
+    public Decimal Saldo { get; set; }
     public ContaOutputConsultaSaldoDTO(decimal saldo)
     {
         Saldo = saldo;
@@ -21,5 +21,12 @@ public class ContaOutputConsultaSaldoDTO
 }
 public class ContaInputPatchAtualizarSaldoDTO
 {
-    public Decimal valor{get;set;}
+    public Decimal valor { get; set; }
+}
+
+public class ContaoOutuputGetListaContasDTO
+{
+    public string Agencia { get; set; }
+    public string NumeroConta { get; set; }
+    public char Digito { get; set; }
 }

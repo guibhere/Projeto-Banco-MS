@@ -96,7 +96,7 @@ public class TrasacaoService : ITrasacaoService
         _splunk.LogarMensagem("Transação salva em cache");
     }
 
-    public async Task<dynamic> ConsultarTransacoesDate(TransacaoInputGetDateDTO input, string agencia, string conta, string digito)
+    public async Task<dynamic> ConsultarTransacoesDate(TransacaoInputGetDateDTO input, string agencia, string conta, char digito)
     {
         _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
         var index = _hash.HashString(conta + agencia + digito);
@@ -160,5 +160,17 @@ public class TrasacaoService : ITrasacaoService
             listResposta.Add(JsonSerializer.Deserialize<Transacao>(result));
         }
         return new Response(listResposta.Count() + " Transcoe(s) encontradas em cache", "OK", 200, listResposta);
+    }
+
+    public async Task<dynamic> ConsultarTransacoesCpf(string cpf)
+    {
+        var contas = _contacliente.ConsultarContasCliente(cpf);
+        var listaresposta = new List<TransacaoOutputGetDTO>();
+        foreach(ContaClienteListaContasDTO conta in contas)
+        {
+            var resp = await ConsultarTransacoesDate(new TransacaoInputGetDateDTO{ Data_Inicial =  DateTime.Parse("2022-08-21"), Data_Final = DateTime.Parse("2022-09-21")},conta.agencia, conta.numeroConta, conta.digito);
+            listaresposta.AddRange(resp.Dados);
+        }
+        return new Response(listaresposta.Count().ToString() + " Transacoes encontrada(s)", "OK", 200, listaresposta);
     }
 }

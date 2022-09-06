@@ -38,7 +38,7 @@ public class ContaService : IContaService
         _context.Contas.Add(conta);
         _context.SaveChanges();
         _splunk.LogarMensagem("Conta Cadastrada:" + conta.Id);
-        return new Response("Conta Cadastrada","OK",200,conta);
+        return new Response("Conta Cadastrada", "OK", 200, conta);
     }
     public dynamic ConsultarSaldo(string agencia, string numero_conta, char digito)
     {
@@ -70,7 +70,7 @@ public class ContaService : IContaService
         {
             _splunk.LogarMensagem("Retirando saldo :" + input.valor);
             conta.Saldo -= input.valor;
-            if(conta.Saldo < 0)
+            if (conta.Saldo < 0)
                 throw new Exception("Saldo Insuficiente");
             _context.Contas.Update(conta);
             _context.SaveChanges();
@@ -79,5 +79,17 @@ public class ContaService : IContaService
             throw new Exception("Conta não encontrada!");
 
         return new ContaOutputConsultaSaldoDTO(conta.Saldo);
+    }
+    public dynamic ConsultarConstasCpf(string cpf)
+    {
+        _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
+        var contas = _context.Contas.ToList().Where(c => c.Cpf == cpf);
+        var contasResponse = new List<ContaoOutuputGetListaContasDTO>();
+
+        foreach(Conta conta in contas)
+        {
+            contasResponse.Add(new ContaoOutuputGetListaContasDTO{NumeroConta = conta.Numero_Conta, Agencia = conta.Numero_Agencia, Digito = conta.Digito});
+        }
+        return contasResponse;
     }
 }

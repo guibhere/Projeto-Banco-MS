@@ -10,6 +10,7 @@ namespace Api_Controle_Transacao.Helper
             public string ConsultarSaldo{get;set;}
             public string DepositarSaldo{get;set;}
             public string RetirarSaldo{get;set;}
+            public string ConsultarContasCpf{get;set;}
         }
     }
 }
