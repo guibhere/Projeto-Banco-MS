@@ -42,8 +42,10 @@ services:
       dockerfile: ./Docker/Dockerfile
     links:
       - dynamodb
+      - redis
     depends_on:
       - dynamodb
+      - redis
     networks:
       - mynetwork
 

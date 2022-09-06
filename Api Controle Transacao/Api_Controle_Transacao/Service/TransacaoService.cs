@@ -4,6 +4,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Util;
+using Api_Controle_Transacao.Helper;
 using Api_Controle_Transacao.Helper.Interface;
 using Api_Controle_Transacao.Models;
 using Api_Controle_Transacao.Service.Interface;
@@ -37,9 +38,19 @@ public class TrasacaoService : ITrasacaoService
         output.Valor_Transacao = input.Valor_Transacao;
 
         _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
-        _splunk.LogarMensagem("Consultando saldo conta origem :" + input.Numero_Conta_Origem);
-        var saldo = _contacliente.ConsultarSaldoConta(input);
-        _splunk.LogarMensagem("Saldo conta origem consultado:" + saldo.saldo);
+        var contahashkey = _hash.HashString(input.Numero_Conta_Origem + input.Numero_Agencia_Origem + input.Numero_Digito_Origem);
+
+        _splunk.LogarMensagem("Consultando saldo em cache");
+        var cacheresp = await _redis.GetDatabase().StringGetAsync(contahashkey);
+        var saldo = (cacheresp.HasValue == false)? null : JsonSerializer.Deserialize<ContaClienteSaldoDTO>(cacheresp);
+
+        if (saldo == null)
+        {
+            _splunk.LogarMensagem("Saldo não encontrado em cache");
+            _splunk.LogarMensagem("Consultando saldo conta origem :" + input.Numero_Conta_Origem);
+            saldo = _contacliente.ConsultarSaldoConta(input);
+            _splunk.LogarMensagem("Saldo conta origem consultado:" + saldo.saldo);
+        }
 
         if (saldo.saldo < input.Valor_Transacao)
             throw new Exception("Saldo insuficiente na conta origem!");
@@ -47,6 +58,10 @@ public class TrasacaoService : ITrasacaoService
         _splunk.LogarMensagem("Retirando valor conta origem");
         saldo = _contacliente.ExtrairSaldoConta(input);
         output.Saldo_Conta_Origem = saldo.saldo;
+
+        _splunk.LogarMensagem("Gravando conta origem em cache");
+        await _redis.GetDatabase().StringSetAsync(contahashkey, JsonSerializer.Serialize<ContaClienteSaldoDTO>(saldo), TimeSpan.FromSeconds(600));
+        _splunk.LogarMensagem("Conta salva em cache");
 
         _splunk.LogarMensagem("Depositando valor conta destino");
         saldo = _contacliente.DepositarSaldoConta(input);
