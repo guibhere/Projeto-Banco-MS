@@ -371,3 +371,5 @@ Arquivos/Certificados/Boleto.pdf
 
 # Migrations
 **/migrations/*
+Api Controle Transacao/.vscode/tasks.json
+Api Controle Transacao/.vscode/launch.json

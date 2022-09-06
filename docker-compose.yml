@@ -150,6 +150,20 @@ services:
     networks:
       - mynetwork
 
+  redis:
+      image: redis
+      hostname: redis
+      restart: always
+      ports:
+        - '6379:6379'
+      command: redis-server --save 20 1 --loglevel warning --requirepass 1234
+      environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+      volumes: 
+        - cachedata:/data
+      networks:
+        - mynetwork
+
 volumes:
   pgdata:
     driver: local
@@ -166,6 +180,8 @@ volumes:
   zookeeper_data:
     driver: local
   kafka_data:
+    driver: local
+  cachedata:
     driver: local
 
 networks:

@@ -14,6 +14,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
 using Confluent.Kafka.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Api_Controle_Transacao
 {
@@ -116,6 +117,9 @@ namespace Api_Controle_Transacao
             //Kafka
             Dictionary<string,string> KafkaConfig = Configuration.GetSection("KafkaConfig").GetChildren().ToDictionary( c=> c.Key,c => c.Value);
             services.AddKafkaClient(KafkaConfig);
+
+            //Redis
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetConnectionString("Redis")));
 
             //Helpers
             setting = Configuration.GetSection("ContaClienteConfig");
