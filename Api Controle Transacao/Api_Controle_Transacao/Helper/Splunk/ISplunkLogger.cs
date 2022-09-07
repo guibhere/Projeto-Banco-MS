@@ -7,5 +7,6 @@ namespace Api_Controle_Transacao.Helper.Interface
         public Task EnviarLogAsync(Response response);
         public string LogarMensagem(string msg);
         public void IniciarLog(string rota,object objeto);
+        public LogModel Log{get;set;}
     }
 }

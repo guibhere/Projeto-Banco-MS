@@ -16,7 +16,9 @@ public class LogModel{
         public string mensagem {get;set;}
         public string rota{get;set;}
         public string payload{get;set;}
+        public string application{get;set;}
         public Response response{get;set;}
+        public string severity {get;set;}
     }
 
 }

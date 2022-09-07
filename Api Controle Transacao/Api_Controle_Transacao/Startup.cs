@@ -105,6 +105,7 @@ namespace Api_Controle_Transacao
 
             // Services
             services.AddScoped<ITrasacaoService, TrasacaoService>();
+            services.AddScoped<ITrasacaoRepository,TrasacaoRepository>();
 
             // Controllers
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

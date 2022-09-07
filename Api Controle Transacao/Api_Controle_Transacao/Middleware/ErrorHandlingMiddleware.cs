@@ -28,28 +28,32 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception e)
         {
-            await Handler(context, e,_splunk);
+            await Handler(context, e, _splunk);
         }
     }
 
-    private async Task Handler(HttpContext context, Exception e,ISplunkLogger _splunk)
+    private async Task Handler(HttpContext context, Exception e, ISplunkLogger _splunk)
     {
         var resposta = context.Response;
-        Response response = new Response();
         resposta.ContentType = "application/json";
-        if (e is Exception)
-        {
-            resposta.StatusCode = (int)HttpStatusCode.InternalServerError;
-        }
-        response.TipoRetorno = "Erro";
-        response.CodigoRetoro = resposta.StatusCode;
-        response.Mensagem = e.Message;
-        response.Dados = e.InnerException;
 
-        var result = JsonSerializer.Serialize<Response>(response);
+        switch (e)
+        {
+            case NullReferenceException:
+                resposta.StatusCode = (int)HttpStatusCode.NotFound;
+                break;
+            default:
+                resposta.StatusCode = (int)HttpStatusCode.InternalServerError;
+                break;
+        }
+
+        var response = new Response(e.Message, "Erro", resposta.StatusCode, e.Data);
+
         _splunk.LogarMensagem("Ocorreu um erro: " + e.Message);
+        _splunk.Log.evento.severity = "Error";
         _splunk.EnviarLogAsync(response);
-        await resposta.WriteAsync(result);
+    
+        await resposta.WriteAsync(JsonSerializer.Serialize<Response>(response));
     }
 }
 

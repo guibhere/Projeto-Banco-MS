@@ -18,6 +18,7 @@ namespace Api_Controle_Transacao.Helper
         {
             public string SplunkCollectorUrl { get; set; }
             public string Token { get; set; }
+            public string Application{get;set;}
 
         }
 
@@ -30,6 +31,8 @@ namespace Api_Controle_Transacao.Helper
             this.Log = new LogModel{index = "history",evento = new LogModel.Evento()};
             this.Log.evento.rota = rota;
             this.Log.evento.payload = JsonSerializer.Serialize(objeto);
+            this.Log.evento.application = _options.Value.Application;
+            this.Log.evento.severity = "Sucess";
             LogarMensagem("Iniciando API");            
         }
 

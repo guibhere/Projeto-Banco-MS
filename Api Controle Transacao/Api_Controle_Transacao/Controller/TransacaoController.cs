@@ -38,11 +38,11 @@ public class TransacaoController : ControllerBase
         _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
-    [HttpGet("Consultar/Transacao/Cpf/{cpf}")]
-    public async Task<ActionResult<dynamic>> ConsultarTransacaoCpf(string cpf)
+    [HttpGet("Consultar/Transacao/Cpf/{cpf}/{datainicio}/{datafinal}")]
+    public async Task<ActionResult<dynamic>> ConsultarTransacaoCpf(string cpf, DateTime datainicio, DateTime datafinal)
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
-        var resp = await _transserv.ConsultarTransacoesCpf(cpf);
+        var resp = await _transserv.ConsultarTransacoesCpf(cpf,datainicio,datafinal);
         _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
