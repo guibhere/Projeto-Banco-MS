@@ -91,13 +91,17 @@ namespace Api_Conta_Cliente
             services.AddScoped<IContaService, ContaService>();
             services.AddScoped<IAgenciaService, AgenciaService>();
             services.AddScoped<ITipoContaService, TipoContaService>();
+
+            //CORS
+            services.AddCors();
+
             // Controllers
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             //Splunk
             var setting = Configuration.GetSection("SplunkConfig");
             services.Configure<SplunkConfig>(setting);
-            services.AddScoped<ISplunkLogger,SplunkLogger>();
+            services.AddScoped<ISplunkLogger, SplunkLogger>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,11 +110,12 @@ namespace Api_Conta_Cliente
 
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI(c => {c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api_Conta_Cliente v1");  c.RoutePrefix = string.Empty;});
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api_Conta_Cliente v1"); c.RoutePrefix = string.Empty; });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
 
