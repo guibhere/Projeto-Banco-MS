@@ -2,8 +2,10 @@ namespace Api_Conta_Cliente.Service.Interface
 {
     public interface IClienteService
     {
-
-        Task<dynamic> CadastrarClienteAsync(ClienteInputPostDTO input);
-        public dynamic CadastrarCliente(ClienteInputPostDTO input);
+        Task<dynamic> CadastrarCliente(ClienteInputPostDTO input);
+        Task<dynamic> ConsultarClientesLista();
+        Task<dynamic> ConsultarCliente(string cpf);
+        Task<dynamic> ExcluirCliente(string cpf);
+        Task<dynamic> AtualizarCliente(ClienteInputPatchDTO input);
     }
 }

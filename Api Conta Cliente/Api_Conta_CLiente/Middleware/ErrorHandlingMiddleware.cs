@@ -47,7 +47,7 @@ public class ErrorHandlingMiddleware
                 break;
         }
 
-        var response = new Response(e.Message, "Erro", resposta.StatusCode, e.Data);
+        var response = new Response(e.Message, "Erro", resposta.StatusCode, e.InnerException != null ? e.InnerException.Message : null);
 
         _splunk.LogarMensagem("Ocorreu um erro: " + e.Message);
         _splunk.Log.evento.severity = "Error";

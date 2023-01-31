@@ -16,13 +16,14 @@ export class ClientesService {
   url = "http://localhost"
   constructor(private httpClient: HttpClient) { }
 
-  GetAll(): Observable<Cliente[]> {
-    return this.httpClient.get<Cliente[]>(this.url)
+  GetAll(): Observable<any> {
+    const urlParam = `${this.url}/Cliente/Consultar/Lista`;
+    return this.httpClient.get<any>(urlParam,httpOptions);
   }
 
-  GetId(idCliente: number): Observable<Cliente> {
-    const urlParam = `${this.url}/${idCliente}`;
-    return this.httpClient.get<Cliente>(urlParam)
+  GetId(cpf: string): Observable<Cliente> {
+    const urlParam = `${this.url}/Cliente/Consultar/${cpf}`;
+    return this.httpClient.get<Cliente>(urlParam);
   }
 
   AddCliente(cliente: Cliente): Observable<any> {
@@ -31,11 +32,12 @@ export class ClientesService {
   }
 
   UpdateCliente(cliente: Cliente): Observable<any> {
-    return this.httpClient.patch<Cliente>(this.url,cliente,httpOptions);
+    const urlParam = `${this.url}/Cliente/Atualizar`;
+    return this.httpClient.patch<Cliente>(urlParam,cliente,httpOptions);
   }
 
-  DeleteCliente(idCliente: number): Observable<any>{
-    const urlParam = `${this.url}/${idCliente}`;
+  DeleteCliente(cpf: string): Observable<any>{
+    const urlParam = `${this.url}/Cliente/Excluir/${cpf}`;
     return this.httpClient.delete<number>(urlParam,httpOptions);
   }
 
