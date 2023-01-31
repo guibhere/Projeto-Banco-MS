@@ -38,7 +38,7 @@ public class ContaService : IContaService
         _context.Contas.Add(conta);
         _context.SaveChanges();
         _splunk.LogarMensagem("Conta Cadastrada:" + conta.Id);
-        return new Response("Conta Cadastrada", "OK", 200, conta);
+        return ("Conta Cadastrada:" + conta.Id);
     }
     public dynamic ConsultarSaldo(string agencia, string numero_conta, char digito)
     {

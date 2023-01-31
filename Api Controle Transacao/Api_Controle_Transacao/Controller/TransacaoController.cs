@@ -25,6 +25,7 @@ public class TransacaoController : ControllerBase
     [HttpPost("Consultar/Transacao/Data/{agencia}/{conta}/{digito}")]
     public async Task<ActionResult<dynamic>> ConsultarTransacaoDate([FromBody] TransacaoInputGetDateDTO input, string agencia, string conta, char digito)
     {
+        var teste = ControllerContext.HttpContext.Request.QueryString;
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
         var resp = await _transserv.ConsultarTransacoesDate(input, agencia, conta, digito);
         _splunk.EnviarLogAsync(resp);
@@ -33,6 +34,7 @@ public class TransacaoController : ControllerBase
     [HttpGet("Consultar/Transacao/Cache")]
     public async Task<ActionResult<dynamic>> ConsultarTransacaoCache()
     {
+        
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
         var resp = await _transserv.ConsultarTransacoesCache();
         _splunk.EnviarLogAsync(resp);

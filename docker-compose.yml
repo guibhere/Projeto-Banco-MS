@@ -35,7 +35,6 @@ services:
   api_controle_transacao:
     container_name: Api_Controle_Transacao
     ports:
-      - 8090:8090
       - 90:90
     build:
       context: ./Api Controle Transacao/Api_Controle_Transacao/

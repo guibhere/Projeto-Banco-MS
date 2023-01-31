@@ -105,7 +105,7 @@ namespace Api_Controle_Transacao
 
             // Services
             services.AddScoped<ITrasacaoService, TrasacaoService>();
-            services.AddScoped<ITrasacaoRepository,TrasacaoRepository>();
+            services.AddScoped<ITrasacaoRepository, TrasacaoRepository>();
 
             // Controllers
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -116,7 +116,7 @@ namespace Api_Controle_Transacao
             services.AddScoped<ISplunkLogger, SplunkLogger>();
 
             //Kafka
-            Dictionary<string,string> KafkaConfig = Configuration.GetSection("KafkaConfig").GetChildren().ToDictionary( c=> c.Key,c => c.Value);
+            Dictionary<string, string> KafkaConfig = Configuration.GetSection("KafkaConfig").GetChildren().ToDictionary(c => c.Key, c => c.Value);
             services.AddKafkaClient(KafkaConfig);
 
             //Redis
@@ -135,7 +135,7 @@ namespace Api_Controle_Transacao
 
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api_Controle_Transacao v1"));
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api_Controle_Transacao v1"); c.RoutePrefix = string.Empty; });
 
             app.UseHttpsRedirection();
 

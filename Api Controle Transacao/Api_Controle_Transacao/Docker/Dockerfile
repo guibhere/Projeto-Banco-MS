@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 5000
+EXPOSE 90
 ENV ASPNETCORE_URLS=http://*:90
     
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build

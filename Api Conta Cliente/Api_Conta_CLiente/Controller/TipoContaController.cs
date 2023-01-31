@@ -32,7 +32,7 @@ public class TipoContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value,input);
         var resp =  _tipocontaserv.CadastrarTipoConta(input);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
 }

@@ -32,7 +32,7 @@ public class AgenciaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value,input);
         var resp =  _agenciaserv.CadastrarAgencia(input);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
 }

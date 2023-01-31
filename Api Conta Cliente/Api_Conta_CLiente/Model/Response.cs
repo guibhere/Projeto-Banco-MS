@@ -6,6 +6,7 @@ namespace Api_Conta_Cliente.Models
         public string TipoRetorno { get; set; }
         public int CodigoRetoro { get; set; }
         public Object Dados { get; set; }
+        public Response(){}
         public Response(string msg, string tipo, int cod, Object dados)
         {
             Mensagem = msg;

@@ -32,7 +32,7 @@ public class ContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
         var resp = _contaserv.CadastrarConta(input, cpf);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
 
@@ -41,7 +41,7 @@ public class ContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
         var resp = _contaserv.ConsultarSaldo(agencia, conta, digito);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
 
     }
@@ -50,7 +50,7 @@ public class ContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
         var resp = _contaserv.DepositarSaldo(input, agencia, conta, digito);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
 
     }
@@ -59,7 +59,7 @@ public class ContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, input);
         var resp = _contaserv.ExtrairSaldo(input, agencia, conta, digito);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
 
@@ -68,7 +68,7 @@ public class ContaController : ControllerBase
     {
         _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
         var resp = _contaserv.ConsultarConstasCpf(cpf);
-        _splunk.EnviarLogAsync("testando splunk");
+        _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
 }
