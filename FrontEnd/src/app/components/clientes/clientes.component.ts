@@ -1,8 +1,8 @@
 import { Component, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Cliente } from 'src/app/Cliente';
-import { ClientesService } from 'src/app/clientes.service';
+import { Cliente } from 'src/app/models/Cliente';
+import { ClientesService } from 'src/app/services/clientes.service';
 
 @Component({
   selector: 'app-clientes',
