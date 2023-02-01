@@ -9,12 +9,14 @@ import { ModalModule} from "ngx-bootstrap/modal";
 import { ClientesComponent } from './components/clientes/clientes.component';
 import { AgenciasComponent } from './components/agencias/agencias.component';
 import { ClientesService } from './services/clientes.service';
+import { TiposContaComponent } from './components/tipos-conta/tipos-conta.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClientesComponent,
-    AgenciasComponent
+    AgenciasComponent,
+    TiposContaComponent
   ],
   imports: [
     BrowserModule,
