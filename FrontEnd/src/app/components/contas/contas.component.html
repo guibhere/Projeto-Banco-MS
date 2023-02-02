@@ -1,0 +1,88 @@
+<div class="container p-5" *ngIf="visibilidadeTable">
+  <div class="border boder-light rounded p-5">
+    <div>
+      <button type="button" class="btn btn-sm btn-secondary"
+        (click)="ExibirFormCadastro()">Cadastrar Tipo Conta</button>
+    </div>
+    <hr/>
+      <table class="table table-striped table-hover table-sm"
+        *ngIf="listaTiposConta">
+        <tr class="thead light">
+          <th>Codigo Tipo Conta</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+        <tr *ngFor="let conta of listaContas">
+          <td>{{conta.codigo_Tipo_Conta}}</td>
+          <td>{{tipoconta.descricao}}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-outline-info"
+              (click)="ExibirFormAtualizacao(tipoconta.codigo_Tipo_Conta)">Atualizar</button>
+            <button type="button" class="btn btn-sm btn-outline-danger"
+              (click)="ExibirConfirmacaoExclusao(tipoconta.codigo_Tipo_Conta,tipoconta.descricao,conteudoModal)">Excluir</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="container p-5" *ngIf="visibilidadeFormulario">
+    <div class="row">
+      <div class="col-6 border boder-light rounded p-5 shadow"
+        *ngIf="formulario">
+        <h6>{{ titulo }}</h6>
+        <hr />
+
+        <form [formGroup]="formulario" (ngSubmit)="EnviarFormulario()">
+          <div class="form-group">
+            <label>Codigo Tipo Conta</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              formControlName="codigo_Tipo_Conta"
+              />
+          </div>
+
+          <div class="form-group">
+            <label>Descrição</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              formControlName="descricao"
+              />
+          </div>
+
+          <div class="container">
+            <div class="row">
+              <div>
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  Salvar
+                </button>
+              </div>
+              <div class="pl-1">
+                <button type="button" class="btn btn-sm btn-light"
+                  (click)="Voltar()">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #conteudoModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Confirmaçãod de exclusão</h4>
+      <button type="button" class="btn-close close pull-right"
+        aria-label="Close" (click)="modalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Proseguir com a exclusão do tipo conta{{descricaotipoConta}}.
+    </div>
+    <div class = "modal-footer">
+      <button type="button" class="btn btn-light" (click)="modalRef?.hide()">Não</button>
+      <button type="button" class="btn btn-outline-danger" data-dimiss="modal" (click)="Excluir(codigotipoConta)">Sim</button>
+    </div>
+  </ng-template>

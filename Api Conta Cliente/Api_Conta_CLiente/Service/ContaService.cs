@@ -86,10 +86,31 @@ public class ContaService : IContaService
         var contas = _context.Contas.ToList().Where(c => c.Cpf == cpf);
         var contasResponse = new List<ContaoOutuputGetListaContasDTO>();
 
-        foreach(Conta conta in contas)
+        foreach (Conta conta in contas)
         {
-            contasResponse.Add(new ContaoOutuputGetListaContasDTO{NumeroConta = conta.Numero_Conta, Agencia = conta.Numero_Agencia, Digito = conta.Digito});
+            contasResponse.Add(new ContaoOutuputGetListaContasDTO { NumeroConta = conta.Numero_Conta, Agencia = conta.Numero_Agencia, Digito = conta.Digito });
         }
         return contasResponse;
+    }
+
+    public async Task<dynamic> ConsultarContas()
+    {
+        _splunk.LogarMensagem("Iniciando :" + MethodBase.GetCurrentMethod().Name);
+        var contas = await _context.Contas
+        .Include(conta => conta.Agencia)
+        .Include(conta => conta.Cliente)
+        .Include(conta => conta.TipoConta)
+        .Select(result => new
+        {
+            numero_conta = result.Numero_Conta,
+            digito_conta = result.Digito,
+            saldo = result.Saldo,
+            cliente = result.Cliente,
+            agencia = result.Agencia,
+            tipo_conta = result.TipoConta
+        })
+        .ToListAsync();
+
+        return new Response("Contas consultadas", "OK", 200, contas);
     }
 }

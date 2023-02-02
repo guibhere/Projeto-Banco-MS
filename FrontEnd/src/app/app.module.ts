@@ -10,13 +10,15 @@ import { ClientesComponent } from './components/clientes/clientes.component';
 import { AgenciasComponent } from './components/agencias/agencias.component';
 import { ClientesService } from './services/clientes.service';
 import { TiposContaComponent } from './components/tipos-conta/tipos-conta.component';
+import { ContasComponent } from './components/contas/contas.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClientesComponent,
     AgenciasComponent,
-    TiposContaComponent
+    TiposContaComponent,
+    ContasComponent
   ],
   imports: [
     BrowserModule,

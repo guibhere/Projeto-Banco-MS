@@ -1,15 +1,16 @@
 ﻿using Api_Conta_Cliente.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Proxies;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
     public DbSet<Cliente>? Clientes { get; set; }
     public DbSet<Conta>? Contas { get; set; }
-    public DbSet<Agencia>? Agencias{get;set;}
-    public DbSet<TipoConta>? TipoContas{get;set;}
+    public DbSet<Agencia>? Agencias { get; set; }
+    public DbSet<TipoConta>? TipoContas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(c => c.Cpf);
             entity.Property(c => c.Cpf).HasMaxLength(11);
             entity.Property(c => c.Nome).HasMaxLength(64);
+            entity.HasMany(c => c.Contas).WithOne(c => c.Cliente).HasForeignKey(c => c.Cpf);
         });
         modelBuilder.Entity<Conta>(entity =>
         {
@@ -36,11 +38,13 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(a => a.Numero_Agencia);
             entity.Property(a => a.Numero_Agencia).HasMaxLength(5);
             entity.Property(a => a.Descricao).HasMaxLength(128);
+            entity.HasMany(c => c.Contas).WithOne(c => c.Agencia);
         });
         modelBuilder.Entity<TipoConta>(entity =>
         {
             entity.HasKey(tp => tp.Codigo_Conta);
             entity.Property(tp => tp.Descricao).HasMaxLength(128);
+            entity.HasMany(c => c.Contas).WithOne(c => c.TipoConta);
         });
 
     }

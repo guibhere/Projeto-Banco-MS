@@ -71,4 +71,12 @@ public class ContaController : ControllerBase
         _splunk.EnviarLogAsync(resp);
         return Ok(resp);
     }
+    [HttpGet("Contas/Lista")]
+    public async Task<ActionResult<dynamic>> ConsultarContas()
+    {
+        _splunk.IniciarLog(ControllerContext.HttpContext.Request.Path.Value, "");
+        var resp = await _contaserv.ConsultarContas();
+        _splunk.EnviarLogAsync(resp);
+        return Ok(resp);
+    }
 }

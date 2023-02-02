@@ -7,5 +7,6 @@ namespace Api_Conta_Cliente.Service.Interface
         public dynamic DepositarSaldo(ContaInputPatchAtualizarSaldoDTO input,string agencia,string conta,char digito);
         public dynamic ExtrairSaldo(ContaInputPatchAtualizarSaldoDTO input,string agencia,string conta,char digito);
         public dynamic ConsultarConstasCpf(string cpf);
+        public Task<dynamic> ConsultarContas();
     }
 }
