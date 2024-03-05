@@ -20,15 +20,15 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(c => c.Cpf);
             entity.Property(c => c.Cpf).HasMaxLength(11);
             entity.Property(c => c.Nome).HasMaxLength(64);
-            entity.HasMany(c => c.Contas).WithOne(c => c.Cliente).HasForeignKey(c => c.Cpf);
+            //entity.HasMany(c => c.Contas).WithOne(c => c.Cliente).HasForeignKey(c => c.Cpf);
         });
         modelBuilder.Entity<Conta>(entity =>
         {
             entity.HasIndex(c => c.Id).IsUnique();
             entity.HasKey(c => c.Numero_Conta);
-            entity.HasOne(c => c.Cliente).WithMany(c => c.Contas).HasForeignKey(c => c.Cpf);
-            entity.HasOne(c => c.Agencia).WithMany(a => a.Contas).HasForeignKey(c => c.Numero_Agencia);
-            entity.HasOne(c => c.TipoConta).WithMany(tc => tc.Contas).HasForeignKey(c => c.Codigo_Tipo_Conta);
+            //entity.HasOne(c => c.Cliente).WithMany(c => c.Contas).HasForeignKey(c => c.Cpf);
+            //entity.HasOne(c => c.Agencia).WithMany(a => a.Contas).HasForeignKey(c => c.Numero_Agencia);
+            //entity.HasOne(c => c.TipoConta).WithMany(tc => tc.Contas).HasForeignKey(c => c.Codigo_Tipo_Conta);
             entity.Property(c => c.Id).ValueGeneratedOnAdd();
             entity.Property(c => c.Numero_Conta).HasMaxLength(6);
             entity.Property(c => c.Digito).HasMaxLength(1);
@@ -38,13 +38,13 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(a => a.Numero_Agencia);
             entity.Property(a => a.Numero_Agencia).HasMaxLength(5);
             entity.Property(a => a.Descricao).HasMaxLength(128);
-            entity.HasMany(c => c.Contas).WithOne(c => c.Agencia);
+            //entity.HasMany(c => c.Contas).WithOne(c => c.Agencia);
         });
         modelBuilder.Entity<TipoConta>(entity =>
         {
             entity.HasKey(tp => tp.Codigo_Conta);
             entity.Property(tp => tp.Descricao).HasMaxLength(128);
-            entity.HasMany(c => c.Contas).WithOne(c => c.TipoConta);
+            //entity.HasMany(c => c.Contas).WithOne(c => c.TipoConta);
         });
 
     }

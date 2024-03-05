@@ -1,4 +1,3 @@
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,8 +7,10 @@ using Api_Conta_Cliente.Service.Interface;
 using Api_Conta_Cliente.Helper.Interface;
 using Api_Conta_Cliente.Helper;
 using static Api_Conta_Cliente.Helper.SplunkLogger;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
+using GraphQL;
+using GraphQL.MicrosoftDI;
+using GraphQL.Types;
+using Api_Conta_Cliente.Queries;
 
 namespace Api_Conta_Cliente
 {
@@ -26,11 +27,11 @@ namespace Api_Conta_Cliente
         public void ConfigureServices(IServiceCollection services)
         {
             //Fluent Validator
-            services.AddRazorPages();
-            services.AddControllers().AddFluentValidation(options =>
-            {
-                options.RegisterValidatorsFromAssemblyContaining<Startup>();
-            });
+            //services.AddRazorPages();
+            //services.AddControllers().AddFluentValidation(options =>
+            //{
+            //  options.RegisterValidatorsFromAssemblyContaining<Startup>();
+            //});
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api_Conta_Cliente", Version = "v1" });
@@ -84,6 +85,11 @@ namespace Api_Conta_Cliente
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]))
                 };
             });
+
+            //Splunk
+            var setting = Configuration.GetSection("SplunkConfig");
+            services.Configure<SplunkConfig>(setting);
+            services.AddScoped<ISplunkLogger, SplunkLogger>();
             // Database
             services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Default")));
             // Services
@@ -91,17 +97,20 @@ namespace Api_Conta_Cliente
             services.AddScoped<IContaService, ContaService>();
             services.AddScoped<IAgenciaService, AgenciaService>();
             services.AddScoped<ITipoContaService, TipoContaService>();
-
+            services.AddScoped<IGraphQLService, GraphQLService>();
+            //GRAPH
+            services.AddSingleton<ISchema, TesteSchema>(services => new TesteSchema(new SelfActivatingServiceProvider(services)));
+            services.AddGraphQL(options =>
+                    options.ConfigureExecution((opt, next) =>
+                    {
+                        opt.EnableMetrics = true;
+                        return next(opt);
+                    }).AddSystemTextJson()
+                );
             //CORS
             services.AddCors();
-
             // Controllers
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-            //Splunk
-            var setting = Configuration.GetSection("SplunkConfig");
-            services.Configure<SplunkConfig>(setting);
-            services.AddScoped<ISplunkLogger, SplunkLogger>();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +120,7 @@ namespace Api_Conta_Cliente
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api_Conta_Cliente v1"); c.RoutePrefix = string.Empty; });
+            app.UseGraphQLAltair();
 
             app.UseHttpsRedirection();
 
@@ -120,33 +130,13 @@ namespace Api_Conta_Cliente
             app.UseAuthentication();
 
             app.UseAuthorization();
-            //Permite Acesso a Arquivos na API, porem apenas com a autenticação
-            /*
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = ctx =>
-                {
-                    if (ctx.Context.User.Identity.IsAuthenticated)
-                    {
-                        ctx.Context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        ctx.Context.Response.ContentLength = 0;
-                        ctx.Context.Response.Body = Stream.Null;
-                        ctx.Context.Response.Headers.Add("Cache-Control", "no-store");
-                    }
-                    else
-                        ctx.Context.Response.Redirect("/Swagger/");
-                },
-                FileProvider = new PhysicalFileProvider(
-                 Path.Combine(env.ContentRootPath, "Arquivos")),
-                RequestPath = "/Arquivos"
-            });
-            */
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            app.UseGraphQL();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapRazorPages();
+                //endpoints.MapRazorPages();
             });
         }
     }

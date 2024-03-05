@@ -1,10 +1,5 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net;
+
+
 using System.Text.Json;
 using Api_Conta_Cliente.Helper.Interface;
 using Api_Conta_Cliente.Models;

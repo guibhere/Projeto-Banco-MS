@@ -1,17 +1,4 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication;
-using System.Threading;
 using Api_Conta_Cliente.Service.Interface;
 using Api_Conta_Cliente.Helper.Interface;
 //[Authorize]
